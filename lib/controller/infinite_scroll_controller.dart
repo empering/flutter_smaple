@@ -35,4 +35,13 @@ class InfiniteScrollController extends GetxController {
     isLoading.value = false;
     hasMore.value = data.length < 30;
   }
+
+  reload() async {
+    isLoading.value = true;
+    data.clear();
+
+    await Future.delayed(Duration(seconds: 2));
+
+    _getData();
+  }
 }

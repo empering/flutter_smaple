@@ -10,30 +10,52 @@ class InfiniteScrollView extends GetView<InfiniteScrollController> {
         title: Text('Infinite Scroll'),
       ),
       body: Obx(
-        () => ListView.separated(
-          controller: controller.scrollController.value,
-          itemBuilder: (_, index) {
-            print(controller.hasMore.value);
+        () => Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView.separated(
+            controller: controller.scrollController.value,
+            itemBuilder: (_, index) {
+              print(controller.hasMore.value);
 
-            if (index < controller.data.length) {
-              var datum = controller.data[index];
-              return ListTile(
-                title: Text('$datum 번째 데이터'),
+              if (index < controller.data.length) {
+                var datum = controller.data[index];
+                return Material(
+                  elevation: 10.0,
+                  child: Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListTile(
+                      leading: Icon(Icons.android_outlined),
+                      title: Text('$datum 번째 데이터'),
+                      trailing: Icon(Icons.arrow_forward_outlined),
+                    ),
+                  ),
+                );
+              }
+
+              if (controller.hasMore.value || controller.isLoading.value) {
+                return Center(child: RefreshProgressIndicator());
+              }
+
+              return Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Text('데이터의 마지막 입니다'),
+                      IconButton(
+                        onPressed: () {
+                          controller.reload();
+                        },
+                        icon: Icon(Icons.refresh_outlined),
+                      ),
+                    ],
+                  ),
+                ),
               );
-            }
-
-            if (controller.hasMore.value || controller.isLoading.value) {
-              return Center(child: RefreshProgressIndicator());
-            }
-
-            return Container(
-              child: Center(
-                child: Text('데이터의 마지막 입니다.'),
-              ),
-            );
-          },
-          separatorBuilder: (_, index) => Divider(),
-          itemCount: controller.data.length + 1,
+            },
+            separatorBuilder: (_, index) => Divider(),
+            itemCount: controller.data.length + 1,
+          ),
         ),
       ),
     );
